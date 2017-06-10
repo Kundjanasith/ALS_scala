@@ -386,125 +386,153 @@ for( ii <- 0 to 5 - 1 ){
     errors += error
     println("============================")
 }
-// var Q_hat = mult( X, Y )
-// val movies_id = new ListBuffer[Int]()
-// val movies_title = new ListBuffer[String]()
-// class Movie( mid: Int, mti: String){
-//     movies_id += mid
-//     movies_title += mti
-//     def getMovieId(): Int = mid
-//     def getMovieTitle(): String = mti
-//     override def toString: String = s" movie_id: $mid , movie_title: $mti"  
-// }
-// import scala.io.Source
-// import scala.collection.mutable.ListBuffer
-// val filename2 = "data/movies.csv"
-// var movieZ = new ListBuffer[Movie]()
-// var numLine1: Int = 0
-// for (line <- Source.fromFile(filename2).getLines()) {
-//   numLine1 += 1
-//   if(numLine1>1) {
-//     val movie_id = line.split(",")(0).toInt 
-//     val movie_title = line.split(",")(1).toString
-//     var temp = new Movie(movie_id,movie_title)
-//     movieZ += temp
+var Q_hat = mult( X, Y )
+val movies_id = new ListBuffer[Int]()
+val movies_title = new ListBuffer[String]()
+class Movie( mid: Int, mti: String){
+    movies_id += mid
+    movies_title += mti
+    def getMovieId(): Int = mid
+    def getMovieTitle(): String = mti
+    override def toString: String = s" movie_id: $mid , movie_title: $mti"  
+}
+import scala.io.Source
+import scala.collection.mutable.ListBuffer
+val filename2 = "data/movies.csv"
+var movieZ = new ListBuffer[Movie]()
+var numLine1: Int = 0
+for (line <- Source.fromFile(filename2).getLines()) {
+  numLine1 += 1
+  if(numLine1>1) {
+    val movie_id = line.split(",")(0).toInt 
+    val movie_title = line.split(",")(1).toString
+    var temp = new Movie(movie_id,movie_title)
+    movieZ += temp
 
-//   }
-// }
-// // Min
-// def minimum( arr1: ListBuffer[Array[Double]] ): Double = {
-//     var res = arr1.apply(0).apply(0)
-//     for( i <- 0 to arr1.length - 1 ){
-//         for( j <- 0 to arr1.apply(0).length - 1 ){
-//             if( arr1.apply(i).apply(j) < res ){
-//                 res = arr1.apply(i).apply(j)
-//             }
-//         }
-//     }
-//     return res 
-// }
-// // Max
-// def maximum( arr1: ListBuffer[Array[Double]] ): Double = {
-//     var res = arr1.apply(0).apply(0)
-//     for( i <- 0 to arr1.length - 1 ){
-//         for( j <- 0 to arr1.apply(0).length - 1 ){
-//             if( arr1.apply(i).apply(j) > res ){
-//                 res = arr1.apply(i).apply(j)
-//             }
-//         }
-//     }
-//     return res 
-// }
-// // minus_const
-// def minus_const( const: Double, arr1: ListBuffer[Array[Double]] ): ListBuffer[Array[Double]] = {
-//     var res = new ListBuffer[Array[Double]]
-//     for( i <- 0 to arr1.length -1 ){
-//         var lineArr = new Array[Double](arr1.apply(0).length)
-//         for( j <- 0 to arr1.apply(0).length - 1 ){
-//             lineArr(j) = arr1.apply(i).apply(j) - const
-//         }
-//         res += lineArr
-//     }
-//     return res
-// }
-// // const_minus
-// def const_minus( const: Double, arr1: ListBuffer[Array[Double]] ): ListBuffer[Array[Double]] = {
-//     var res = new ListBuffer[Array[Double]]
-//     for( i <- 0 to arr1.length -1 ){
-//         var lineArr = new Array[Double](arr1.apply(0).length)
-//         for( j <- 0 to arr1.apply(0).length - 1 ){
-//             lineArr(j) = const - arr1.apply(i).apply(j)
-//         }
-//         res += lineArr
-//     }
-//     return res
-// }
-// // star_const
-// def star_const( const: Double, arr1: ListBuffer[Array[Double]] ): ListBuffer[Array[Double]] = {
-//     var res = new ListBuffer[Array[Double]]
-//     for( i <- 0 to arr1.length -1 ){
-//         var lineArr = new Array[Double](arr1.apply(0).length)
-//         for( j <- 0 to arr1.apply(0).length - 1 ){
-//             lineArr(j) = arr1.apply(i).apply(j) * const
-//         }
-//         res += lineArr
-//     }
-//     return res
-// }
-// // argmax
-// import scala.collection.mutable.ListBuffer
-// val test1 = new ListBuffer[Array[Double]]()
-// test1 += Array(0.0,1.0,2.0)
-// test1 += Array(3.0,4.0,5.0)
-// def indiceMax( arr1: Array[Double] ): Int = {
-//     var index = 0
-//     var max = arr1.apply(0)
-//     for( i <- 0 to arr1.length - 1 ){
-//         if(arr1.apply(i)>max){
-//             max = arr1.apply(i)
-//             index = i
-//         }
-//     }   
-//     return index
-// }
-// def argmax( arr1: ListBuffer[Array[Double]] ): ListBuffer[Array[Double]] = {
-//     var res = new ListBuffer[Array[Double]]
-//     var lineArr = new Array[Double](arr1.length)
-//     for( j <- 0 to arr1.length - 1 ){
-//         lineArr(j) = indiceMax(arr1.apply(j))
-//     }
-//     res += lineArr
-//     return res
-// }
-// def print_recommendation( W: ListBuffer[Array[Double]], Q: ListBuffer[Array[Double]], Qhat: ListBuffer[Array[Double]]){
-//     var Qhat1 = minus_const(minimum(Qhat),Qhat)
-//     var Qhat2 = star_const(5.0/maximum(Qhat1),Qhat1)
-//     var m_id = argmax( star( const_minus( 5, Qhat2 ), W) )
-//     for( i <- 1 to m ){
-//         for( j <- m_id ){
-//             println(i+"--"+j)
-//         }
-//     }
-// }
-// print_recommendation( W, Q , Q_hat)
-
+  }
+}
+// Min
+def minimum( arr1: ListBuffer[Array[Double]] ): Double = {
+    var res = arr1.apply(0).apply(0)
+    for( i <- 0 to arr1.length - 1 ){
+        for( j <- 0 to arr1.apply(0).length - 1 ){
+            if( arr1.apply(i).apply(j) < res ){
+                res = arr1.apply(i).apply(j)
+            }
+        }
+    }
+    return res 
+}
+// Max
+def maximum( arr1: ListBuffer[Array[Double]] ): Double = {
+    var res = arr1.apply(0).apply(0)
+    for( i <- 0 to arr1.length - 1 ){
+        for( j <- 0 to arr1.apply(0).length - 1 ){
+            if( arr1.apply(i).apply(j) > res ){
+                res = arr1.apply(i).apply(j)
+            }
+        }
+    }
+    return res 
+}
+// minus_const
+def minus_const( const: Double, arr1: ListBuffer[Array[Double]] ): ListBuffer[Array[Double]] = {
+    var res = new ListBuffer[Array[Double]]
+    for( i <- 0 to arr1.length -1 ){
+        var lineArr = new Array[Double](arr1.apply(0).length)
+        for( j <- 0 to arr1.apply(0).length - 1 ){
+            lineArr(j) = arr1.apply(i).apply(j) - const
+        }
+        res += lineArr
+    }
+    return res
+}
+// const_minus
+def const_minus( const: Double, arr1: ListBuffer[Array[Double]] ): ListBuffer[Array[Double]] = {
+    var res = new ListBuffer[Array[Double]]
+    for( i <- 0 to arr1.length -1 ){
+        var lineArr = new Array[Double](arr1.apply(0).length)
+        for( j <- 0 to arr1.apply(0).length - 1 ){
+            lineArr(j) = const - arr1.apply(i).apply(j)
+        }
+        res += lineArr
+    }
+    return res
+}
+// star_const
+def star_const( const: Double, arr1: ListBuffer[Array[Double]] ): ListBuffer[Array[Double]] = {
+    var res = new ListBuffer[Array[Double]]
+    for( i <- 0 to arr1.length -1 ){
+        var lineArr = new Array[Double](arr1.apply(0).length)
+        for( j <- 0 to arr1.apply(0).length - 1 ){
+            lineArr(j) = arr1.apply(i).apply(j) * const
+        }
+        res += lineArr
+    }
+    return res
+}
+// argmax
+import scala.collection.mutable.ListBuffer
+val test1 = new ListBuffer[Array[Double]]()
+test1 += Array(0.0,1.0,2.0)
+test1 += Array(3.0,4.0,5.0)
+def indiceMax( arr1: Array[Double] ): Int = {
+    var index = 0
+    var max = arr1.apply(0)
+    for( i <- 0 to arr1.length - 1 ){
+        if(arr1.apply(i)>max){
+            max = arr1.apply(i)
+            index = i
+        }
+    }   
+    return index
+}
+def argmax( arr1: ListBuffer[Array[Double]] ): ListBuffer[Array[Double]] = {
+    var res = new ListBuffer[Array[Double]]
+    var lineArr = new Array[Double](arr1.length)
+    print("lenp"+arr1.length)
+    for( j <- 0 to arr1.length - 1 ){
+        print("sdf")
+        lineArr(j) = indiceMax(arr1.apply(j))
+    }
+    res += lineArr
+    return res
+}
+def map_movie_title( mid: Int ): String = {
+    var res = ""
+    for( i <- movieZ ){
+        if(i.getMovieId()==mid){
+            res = i.getMovieTitle()
+        }
+    }
+    return res
+}
+def print_movie_rank( arr: Array[Double]){
+    var movie_index = new Array[Int](5)
+    var rate = new Array[Double](5)
+    for( i <- 0 to 4 ){  
+        var rat = arr.reduceLeft(_ max _)
+        val loop1 = new Breaks;
+        loop1.breakable {
+            for( j <- 0 to arr.length - 1 ){              
+                if(arr(j)==rat){
+                    movie_index(i) = j + 1 
+                    rate(i) = rat
+                    arr(j) = 0
+                    loop1.break
+                }
+            }
+        }
+    }
+    for( i <- 0 to 4 ){
+        println( movie_index(i)+":"+map_movie_title(movie_index(i))+"-"+rate(i))
+    }
+}
+def print_recommendation( W: ListBuffer[Array[Double]], Q: ListBuffer[Array[Double]], Qhat: ListBuffer[Array[Double]]){
+    var Qhat1 = minus_const(minimum(Qhat),Qhat)
+    var Qhat2 = star_const(5.0/maximum(Qhat1),Qhat1)
+    for( i <- users.to[Array].reduceLeft(_ min _) to users.to[Array].reduceLeft(_ max _) ){
+        print_movie_rank(Qhat2.apply(i-1))
+    }
+}
+print_recommendation( W, Q , Q_hat)
