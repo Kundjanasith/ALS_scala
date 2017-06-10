@@ -51,15 +51,15 @@ def createPivotW( uid: Int, mid: Int ): Double = {
   return res
 }
 // Parameter
-// val lambda_ = 0.1
-// val n_factors = 100
-// val m = ( users.to[Array].reduceLeft(_ max _) - users.to[Array].reduceLeft(_ min _) ) + 1
-// val n = ( movies.to[Array].reduceLeft(_ max _) - movies.to[Array].reduceLeft(_ min _) ) + 1
-// val n_iterations = 20
+val lambda_ = 0.1
+val n_factors = 100
+val m = ( users.to[Array].reduceLeft(_ max _) - users.to[Array].reduceLeft(_ min _) ) + 1
+val n = ( movies.to[Array].reduceLeft(_ max _) - movies.to[Array].reduceLeft(_ min _) ) + 1
+val n_iterations = 20
 
-val m = 2
-val n = 3
-val n_factors = 4
+// val m = 2
+// val n = 3
+// val n_factors = 4
 
 def mult[A](a: Array[Array[A]], b: Array[Array[A]])(implicit n: Numeric[A]) = {
   import n._
@@ -89,3 +89,49 @@ for( i <- 0 to n_factors - 1 ){
 val YmatrixY = matrixY.to[Array]
 // XY = X * Y
 val matrixXY = mult(XmatrixX,YmatrixY)
+// MatrixQ
+var matrixQ = new ListBuffer[Array[Double]]()
+for( i <- users.to[Array].reduceLeft(_ min _) to users.to[Array].reduceLeft(_ max _) ){
+  var lineArr = new Array[Double](n)
+  for( j <- movies.to[Array].reduceLeft(_ min _) to movies.to[Array].reduceLeft(_ max _) ){
+    lineArr(j-movies.to[Array].reduceLeft(_ min _)) = createPivotQ( i, j )
+  }
+  matrixQ += lineArr
+}
+// MatrixW
+var matrixW = new ListBuffer[Array[Double]]()
+for( i <- users.to[Array].reduceLeft(_ min _) to users.to[Array].reduceLeft(_ max _) ){
+  var lineArr = new Array[Double](n)
+  for( j <- movies.to[Array].reduceLeft(_ min _) to movies.to[Array].reduceLeft(_ max _) ){
+    lineArr(j-movies.to[Array].reduceLeft(_ min _)) = createPivotW( i, j )
+  }
+  matrixW += lineArr
+}
+// Q - XY
+var matrixQXY = new ListBuffer[Array[Double]]()
+for( i <- 0 to m - 1 ){
+  var lineArr = new Array[Double](n)
+  for( j <- 0 to n - 1 ){
+    lineArr(j) = matrixQ.apply(i).apply(j) - matrixXY.apply(i).apply(j)
+  }
+  matrixQXY += lineArr
+}
+// W * ( Q - XY )
+var matrixWQXY2 = new ListBuffer[Array[Double]]()
+for( i <- 0 to m - 1 ){
+  var lineArr = new Array[Double](n)
+  for( j <- 0 to n - 1 ){
+    lineArr(j) = matrixQ.apply(i).apply(j) * matrixQXY.apply(i).apply(j)
+  }
+  matrixWQXY2 += lineArr
+}
+val errorArr = mult(matrixWQXY2.to[Array],matrixWQXY2.to[Array])
+def sumArr( arr: Array[Double] ): Double =  {
+  var res = 0.0 
+  for(a <- 0 to arr.length -1 ){
+    res += arr(a)
+  }
+  return res
+}
+var errorSum  = sumArr(errorArr)
+
