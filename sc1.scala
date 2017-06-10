@@ -80,11 +80,11 @@ val n_iterations = 20
 // Q_hat = np.dot(X, Y)
 // print('Error of rated movies: {}'.format(get_error(Q, X, Y, W)))
 
+// Transpose
 import scala.collection.mutable.ListBuffer
 val test = new ListBuffer[Array[Double]]()
 test += Array(4.0,7.0,2.0,1.0)
 test += Array(3.0,9.0,8.0,6.0)
-
 def transe( arr: ListBuffer[Array[Double]] ): ListBuffer[Array[Double]] = {
     val temp = arr
     var res = new ListBuffer[Array[Double]]
@@ -92,6 +92,35 @@ def transe( arr: ListBuffer[Array[Double]] ): ListBuffer[Array[Double]] = {
         var lineArr = new Array[Double](arr.length)
         for( j <- 0 to arr.length - 1 ){
             lineArr(j) = temp.apply(j).apply(i)
+        }
+        res += lineArr
+    }
+    return res
+}
+// Mult
+import scala.collection.mutable.ListBuffer
+val test1 = new ListBuffer[Array[Double]]()
+test1 += Array(1.0,2.0,3.0)
+test1 += Array(4.0,5.0,6.0)
+val test2 = new ListBuffer[Array[Double]]()
+test2 += Array(7.0,8.0)
+test2 += Array(9.0,10.0)
+test2 += Array(11.0,12.0)
+def sub_mul( i: Int, j: Int, arr1: ListBuffer[Array[Double]], arr2: ListBuffer[Array[Double]] ): Double = {
+    var res = 0.0
+    for( k <- 0 to arr1.apply(0).length - 1 ){
+        res += arr1.apply(i).apply(k) * arr2.apply(k).apply(j)
+    }
+    return res
+}
+def mult( arr1: ListBuffer[Array[Double]], arr2: ListBuffer[Array[Double]] ): ListBuffer[Array[Double]] = {
+    var m = arr1.length
+    var n = arr2.apply(0).length
+    var res = new ListBuffer[Array[Double]]
+    for( i <- 0 to m-1 ){
+        var lineArr = new Array[Double](n)
+        for( j <- 0 to n-1 ){
+            lineArr(j) = sub_mul( i, j, arr1, arr2 ) 
         }
         res += lineArr
     }
