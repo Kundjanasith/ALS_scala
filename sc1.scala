@@ -128,6 +128,10 @@ def mult( arr1: ListBuffer[Array[Double]], arr2: ListBuffer[Array[Double]] ): Li
 // Inverse 
 import scala.collection.mutable.ListBuffer
 import scala.util.control._
+val test1 = new ListBuffer[Array[Double]]()
+test1 += Array(7.0,2.0,1.0)
+test1 += Array(0.0,3.0,-1.0)
+test1 += Array(-3.0,4.0,-2.0)
 def assign( posI: Int, posJ: Int, value: Double, arr: ListBuffer[Array[Double]]): ListBuffer[Array[Double]] = {
    var res = new ListBuffer[Array[Double]]
     for( i <- 0 to arr.length - 1 ){
@@ -215,17 +219,27 @@ def inverse( arr1: ListBuffer[Array[Double]] ): ListBuffer[Array[Double]] = {
     } 
     return I
 }
-
-
-
-
-
 // Solve
+import scala.collection.mutable.ListBuffer
+val test1 = new ListBuffer[Array[Double]]()
+test1 += Array(7.0,5.0)
+test1 += Array(3.0,-2.0)
+val test2 = new ListBuffer[Array[Double]]()
+test2 += Array(3.0)
+test2 += Array(22.0)
 def solve( arr1: ListBuffer[Array[Double]], arr2: ListBuffer[Array[Double]] ): ListBuffer[Array[Double]] = {
+    var res = new ListBuffer[Array[Double]]
+    var in_arr1 = inverse(arr1)
+    res = mult(inverse(arr1),arr2)
+    return res
+}
 
-}
-var errors = new ListBuffer[Double]()
-for( ii <- 0 to n_iterations - 1 ){
-    X = transe(solve(mult()+ , mult() ))
-    Y = solve(mult()+ , mult() )
-}
+
+
+
+
+// var errors = new ListBuffer[Double]()
+// for( ii <- 0 to n_iterations - 1 ){
+//     X = transe(solve(mult()+ , mult() ))
+//     Y = solve(mult()+ , mult() )
+// }
