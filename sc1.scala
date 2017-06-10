@@ -21,7 +21,7 @@ def print_readable( arr: ListBuffer[Array[Double]] ){
         }
         print(")")
     }
-    print("]")
+    println("]")
 }
 val filename = "data/rat.csv"
 val users = new ListBuffer[Int]()
@@ -62,8 +62,10 @@ val n_iterations = 10
 // Check Pivot Q
 def createPivotQ( uid: Int, mid: Int ): Double = {
   var res: Double = 0.0 
-  for( r <- ratingArr ){
+  print(ratingArr.length)
+  for( r <- ratings ){
     if(r.getUserId()==uid&&r.getMovieId()==mid){
+    //   println("TREEEE")
       res = r.getRate()
     }
   }
@@ -77,10 +79,13 @@ for( i <- users.to[Array].reduceLeft(_ min _) to users.to[Array].reduceLeft(_ ma
   }
   Q += lineArr
 }
+// println("###############")
+// print_readable(Q)
+// println("###############")
 // Check Pivot W
 def createPivotW( uid: Int, mid: Int ): Double = {
   var res: Double = 0.0 
-  for( r <- ratingArr ){
+  for( r <- ratings ){
     if(r.getUserId()==uid&&r.getMovieId()==mid){
       res = 1.0
     }
@@ -120,7 +125,7 @@ for( i <- 0 to n_factors - 1 ){
   }
   Y += lineArr
 }
-print_readable(Y)
+// print_readable(Y)
 // Transpose
 // import scala.collection.mutable.ListBuffer
 // val test = new ListBuffer[Array[Double]]()
@@ -194,7 +199,7 @@ def inverse( arr1: ListBuffer[Array[Double]] ): ListBuffer[Array[Double]] = {
     var I = new ListBuffer[Array[Double]]
     var C = new ListBuffer[Array[Double]]
     if(arr1.length!=arr1.apply(0).length) { return null }
-    print(arr1)
+    // print(arr1)
     for( i <- 0 to arr1.length - 1 ){
         var lineArrI = new Array[Double](arr1.length)
         var lineArrC = new Array[Double](arr1.length)
@@ -218,7 +223,7 @@ def inverse( arr1: ListBuffer[Array[Double]] ): ListBuffer[Array[Double]] = {
                 for( ii <- i+1 to arr1.length - 1 ){
                     if(C.apply(ii).apply(i)!=0){
                         for( j <- 0 to arr1.length - 1 ){
-                            print(j)
+                            // print(j)
                             e = C.apply(i)(j)
                             // C.apply(i).apply(j) = C.apply(ii).apply(j)
                             // C.apply(ii).apply(j) = e
@@ -346,33 +351,40 @@ def get_error( q: ListBuffer[Array[Double]], x: ListBuffer[Array[Double]], y: Li
     var wqxy2 = star(wqxy,wqxy)
     println("++++++")
     print_readable(x)
-    print(y)
-    println(xy)
-    println(sumR(wqxy2))
+    // print(y)
+    // println(xy)
+    // println(sumR(wqxy2))
     println("++++++")
     return sumR(wqxy2)
 }   
 var errors = new ListBuffer[Double]()
-for( ii <- 0 to n_iterations - 1 ){
-    // var x1 = plus( mult( Y, transe(Y) ) ,  eyeStar( lambda_, n_factors ) )
-    // var x2 = mult( Y, transe(Q) )
-    // var x3 = solve(x1,x2)
-    // X = transe(x3)
+// for( ii <- 0 to n_iterations - 1 ){
+for( ii <- 0 to 5 - 1 ){
+    println("============================")
+    // print_readable(X)
+    var x1 = plus( mult( Y, transe(Y) ) ,  eyeStar( lambda_, n_factors ) )
+    // print_readable(x1)
+    var x2 = mult( Y, transe(Q) )
+    // print_readable(x2)
+    var x3 = solve(x1,x2)
+    // print_readable(x3)
+    X = transe(x3)
     
     println("111111111111111")
     print_readable(X)
-    X = transe( solve( plus( mult( Y, transe(Y) ) ,  eyeStar( lambda_, n_factors ) ), mult( Y, transe(Q) ) ))
-    // var y1 = plus( mult( transe(X), X ) ,  eyeStar( lambda_, n_factors ) )
-    // var y2 = mult( transe(X), Q )
-    // var y3 = solve(y1,y2)
-    // Y = y3
-    Y = solve(  plus( mult( transe(X), X ) ,  eyeStar( lambda_, n_factors ) ), mult( transe(X), Q ) )
+    // X = transe( solve( plus( mult( Y, transe(Y) ) ,  eyeStar( lambda_, n_factors ) ), mult( Y, transe(Q) ) ))
+    var y1 = plus( mult( transe(X), X ) ,  eyeStar( lambda_, n_factors ) )
+    var y2 = mult( transe(X), Q )
+    var y3 = solve(y1,y2)
+    Y = y3 
+    // Y = solve(  plus( mult( transe(X), X ) ,  eyeStar( lambda_, n_factors ) ), mult( transe(X), Q ) )
     // if(ii%100==0){
     println(ii+"iteration is completed")
     // }
     var error = get_error(Q, X, Y, W)
     println("Error of rated movies: "+error)
     errors += error
+    println("============================")
 }
 // var Q_hat = mult( X, Y )
 // val movies_id = new ListBuffer[Int]()
