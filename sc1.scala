@@ -100,12 +100,11 @@ def transe( arr: ListBuffer[Array[Double]] ): ListBuffer[Array[Double]] = {
 // Mult
 import scala.collection.mutable.ListBuffer
 val test1 = new ListBuffer[Array[Double]]()
-test1 += Array(1.0,2.0,3.0)
-test1 += Array(4.0,5.0,6.0)
+test1 += Array(1.0,0.0)
+test1 += Array(0.0,1.0)
 val test2 = new ListBuffer[Array[Double]]()
-test2 += Array(7.0,8.0)
-test2 += Array(9.0,10.0)
-test2 += Array(11.0,12.0)
+test2 += Array(4.0,1.0)
+test2 += Array(2.0,2.0)
 def sub_mul( i: Int, j: Int, arr1: ListBuffer[Array[Double]], arr2: ListBuffer[Array[Double]] ): Double = {
     var res = 0.0
     for( k <- 0 to arr1.apply(0).length - 1 ){
@@ -126,9 +125,107 @@ def mult( arr1: ListBuffer[Array[Double]], arr2: ListBuffer[Array[Double]] ): Li
     }
     return res
 }
+// Inverse 
+import scala.collection.mutable.ListBuffer
+import scala.util.control._
+def assign( posI: Int, posJ: Int, value: Double, arr: ListBuffer[Array[Double]]): ListBuffer[Array[Double]] = {
+   var res = new ListBuffer[Array[Double]]
+    for( i <- 0 to arr.length - 1 ){
+        var lineArr = new Array[Double](arr.apply(0).length)
+        for( j <- 0 to arr.apply(0).length - 1 ){
+            if(i==posI&&j==posJ){
+                lineArr(j) = value
+            }
+            else{
+                lineArr(j) = arr.apply(i).apply(j)
+            }
+        } 
+        res += lineArr
+    }
+    return res
+}
+def inverse( arr1: ListBuffer[Array[Double]] ): ListBuffer[Array[Double]] = {
+    // var res = new ListBuffer[Array[Double]]
+    var I = new ListBuffer[Array[Double]]
+    var C = new ListBuffer[Array[Double]]
+    if(arr1.length!=arr1.apply(0).length) { return null }
+    print(arr1)
+    for( i <- 0 to arr1.length - 1 ){
+        var lineArrI = new Array[Double](arr1.length)
+        var lineArrC = new Array[Double](arr1.length)
+        for( j <- 0 to arr1.length - 1){
+            if(i==j){
+                lineArrI(j) = 1
+            }
+            else{
+                lineArrI(j) = 0
+            }
+            lineArrC(j) = arr1.apply(i).apply(j)
+        }
+        I += lineArrI
+        C += lineArrC
+    }
+    for( i <- 0 to arr1.length - 1 ){
+        var e = C.apply(i).apply(i)
+        if(e==0){
+            val loop = new Breaks;
+            loop.breakable {
+                for( ii <- i+1 to arr1.length - 1 ){
+                    if(C.apply(ii).apply(i)!=0){
+                        for( j <- 0 to arr1.length - 1 ){
+                            print(j)
+                            e = C.apply(i)(j)
+                            // C.apply(i).apply(j) = C.apply(ii).apply(j)
+                            // C.apply(ii).apply(j) = e
+                            C = assign(i,j,C.apply(ii).apply(j),C)
+                            C = assign(ii,j,e,C)
+                            e = I.apply(i)(j)
+                            // I.apply(i).apply(j) = I.apply(ii).apply(j)
+                            // I.apply(ii).apply(j) = e
+                            I = assign(i,j,I.apply(ii).apply(j),I)
+                            I = assign(ii,j,e,I)
+                        }
+                        loop.break
+                    }
+                }
+            }
+            e = C.apply(i)(i)
+            if(e==0){ return null}
+        }
+        for( j <- 0 to arr1.length - 1 ){
+            // C.apply(i).apply(j) = C.apply(i).apply(j)/e
+            C = assign(i,j,C.apply(i).apply(j)/e,C)
+            // I.apply(i).apply(j) = I.apply(i).apply(j)/e
+            I = assign(i,j,I.apply(i).apply(j)/e,I)
+        }
+        for( ii <- 0 to arr1.length - 1 ){
+            if(ii==i){
+                // continue
+            }
+            else {
+                e = C.apply(ii).apply(i)
+                for( j <- 0 to arr1.length - 1 ){
+                    // C.apply(ii).apply(j) = C.apply(ii).apply(j) - e*C.apply(i).apply(j)
+                    C = assign(ii,j,C.apply(ii).apply(j) - e*C.apply(i).apply(j),C)
+                    // I.apply(ii).apply(j) = I.apply(ii).apply(j) - e*I.apply(i).apply(j)
+                    I = assign(ii,j,I.apply(ii).apply(j) - e*I.apply(i).apply(j),I)
+                }
+            }
+        } 
+    } 
+    return I
+}
 
+
+
+
+
+// Solve
+def solve( arr1: ListBuffer[Array[Double]], arr2: ListBuffer[Array[Double]] ): ListBuffer[Array[Double]] = {
+
+}
 var errors = new ListBuffer[Double]()
 for( ii <- 0 to n_iterations - 1 ){
-    X = transe(solve( , ))
-    Y = solve( , )
+    X = transe(solve(mult()+ , mult() ))
+    Y = solve(mult()+ , mult() )
 }
