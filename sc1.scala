@@ -70,16 +70,6 @@ val n = ( movies.to[Array].reduceLeft(_ max _) - movies.to[Array].reduceLeft(_ m
 val n_iterations = 20
 // *** //
 
-// errors = []
-// for ii in range(n_iterations):
-//     X = np.linalg.solve(np.dot(Y, Y.T) + lambda_ * np.eye(n_factors), np.dot(Y, Q.T)).T
-//     Y = np.linalg.solve(np.dot(X.T, X) + lambda_ * np.eye(n_factors), np.dot(X.T, Q))
-//     if ii % 100 == 0:
-//         print('{}th iteration is completed'.format(ii))
-//     errors.append(get_error(Q, X, Y, W))
-// Q_hat = np.dot(X, Y)
-// print('Error of rated movies: {}'.format(get_error(Q, X, Y, W)))
-
 // Transpose
 import scala.collection.mutable.ListBuffer
 val test = new ListBuffer[Array[Double]]()
@@ -233,13 +223,85 @@ def solve( arr1: ListBuffer[Array[Double]], arr2: ListBuffer[Array[Double]] ): L
     res = mult(inverse(arr1),arr2)
     return res
 }
-
-
-
-
-
-// var errors = new ListBuffer[Double]()
-// for( ii <- 0 to n_iterations - 1 ){
-//     X = transe(solve(mult()+ , mult() ))
-//     Y = solve(mult()+ , mult() )
-// }
+// Eye
+import scala.collection.mutable.ListBuffer
+def eyeStar( lambda: Int, n: Int): ListBuffer[Array[Double]] = {
+    var res = new ListBuffer[Array[Double]]
+    for( i <- 0 to n - 1 ){
+        var lineArr = new Array[Double](n)
+        for( j <- 0 to n - 1 ){
+            if(i==j){
+                lineArr(j) = 1 * lambda
+            }
+            else{
+                lineArr(j) = 0
+            }
+        }
+        res += lineArr
+    }
+    return res 
+}
+// Plus 
+def plus( arr1: ListBuffer[Array[Double]], arr2: ListBuffer[Array[Double]] ): ListBuffer[Array[Double]] = {
+    var res = new ListBuffer[Array[Double]]
+    for( i <- 0 to arr1.length - 1 ){
+        var lineArr = new Array[Double](arr1.apply(0).length)
+        for( j <- 0 to arr1.apply(0).length - 1 ){
+            lineArr(j) = arr1.apply(i).apply(j) + arr2.apply(i).apply(j)
+        }
+        res += lineArr
+    }
+    return res 
+}
+// Minus
+def minus( arr1: ListBuffer[Array[Double]], arr2: ListBuffer[Array[Double]] ): ListBuffer[Array[Double]] = {
+    var res = new ListBuffer[Array[Double]]
+    for( i <- 0 to arr1.length - 1 ){
+        var lineArr = new Array[Double](arr1.apply(0).length)
+        for( j <- 0 to arr1.apply(0).length - 1 ){
+            lineArr(j) = arr1.apply(i).apply(j) - arr2.apply(i).apply(j)
+        }
+        res += lineArr
+    }
+    return res 
+}
+// Star
+def star( arr1: ListBuffer[Array[Double]], arr2: ListBuffer[Array[Double]] ): ListBuffer[Array[Double]] = {
+    var res = new ListBuffer[Array[Double]]
+    for( i <- 0 to arr1.length - 1 ){
+        var lineArr = new Array[Double](arr1.apply(0).length)
+        for( j <- 0 to arr1.apply(0).length - 1 ){
+            lineArr(j) = arr1.apply(i).apply(j) * arr2.apply(i).apply(j)
+        }
+        res += lineArr
+    }
+    return res 
+}
+// sumR
+def sumR( arr: ListBuffer[Array[Double]]): Double = {
+    var res = 0.0
+    for( i <- 0 to arr.length - 1 ){
+        for( j <- 0 to arr.apply(0).length - 1){
+            res = res + arr.apply(i).apply(j)
+        }
+    }
+    return res
+}
+// Get error
+def get_error( Q: ListBuffer[Array[Double]], X: ListBuffer[Array[Double]], Y: ListBuffer[Array[Double]], W: ListBuffer[Array[Double]] ): Double = {
+    var xy = mult(X,Y)
+    var qxy = minus(Q,xy)
+    var wqxy = star(W,xy)
+    var wqxy2 = start(wqxy,wqxy)
+    return sumR(wqxy2)
+}   
+var errors = new ListBuffer[Double]()
+for( ii <- 0 to n_iterations - 1 ){
+    X = transe( solve( plus( mult( Y, transe(Y) ) ,  eyeStar( lambda_, n_factors ) ), mult( Y, transe(Q) ) ))
+    Y = solve(  plus( mult( transe(X), X ) ,  eyeStar( lambda_, n_factors ) ), mult( transe(X), Q ) )
+    // if(ii%100==0){
+        println(ii+"iteration is completed")
+    // }
+    errors += get_error( Q, X, Y, W )
+}
+var Q_hat = mult( X, Y )
