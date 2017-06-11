@@ -90,7 +90,6 @@ for( i <- users.to[Array].reduceLeft(_ min _) to users.to[Array].reduceLeft(_ ma
   }
   W += lineArr
 }
-
 // Matrix X
 var X = new ListBuffer[Array[Double]]()
 for( i <- 0 to m - 1 ){
