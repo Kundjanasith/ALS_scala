@@ -17,7 +17,6 @@ def print_readable( arr: ListBuffer[Array[Double]] ){
 val filename = "data/rat.csv"
 val users = new ListBuffer[Int]()
 val movies = new ListBuffer[Int]()
-
 // Define rating
 class Rating( uid: Int, mid: Int, rat: Double ){
     var user_id: Int = uid
@@ -99,7 +98,7 @@ for( i <- 0 to m - 1 ){
   }
   X += lineArr
 }
-// Matrix 
+// Matrix Y
 var Y = new ListBuffer[Array[Double]]()
 for( i <- 0 to n_factors - 1 ){
   var lineArr = new Array[Double](n)
@@ -224,7 +223,6 @@ def solve( arr1: ListBuffer[Array[Double]], arr2: ListBuffer[Array[Double]] ): L
     return res
 }
 // Eye
-import scala.collection.mutable.ListBuffer
 def eyeStar( lambda: Double, n: Int): ListBuffer[Array[Double]] = {
     var res = new ListBuffer[Array[Double]]
     for( i <- 0 to n - 1 ){
@@ -322,8 +320,6 @@ class Movie( mid: Int, mti: String){
     def getMovieTitle(): String = mti
     override def toString: String = s" movie_id: $mid , movie_title: $mti"  
 }
-import scala.io.Source
-import scala.collection.mutable.ListBuffer
 val filename2 = "data/movies.csv"
 var movieZ = new ListBuffer[Movie]()
 var numLine1: Int = 0
@@ -400,10 +396,6 @@ def star_const( const: Double, arr1: ListBuffer[Array[Double]] ): ListBuffer[Arr
     return res
 }
 // argmax
-import scala.collection.mutable.ListBuffer
-val test1 = new ListBuffer[Array[Double]]()
-test1 += Array(0.0,1.0,2.0)
-test1 += Array(3.0,4.0,5.0)
 def indiceMax( arr1: Array[Double] ): Int = {
     var index = 0
     var max = arr1.apply(0)
