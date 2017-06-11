@@ -1,10 +1,7 @@
-import org.apache.spark.SparkConf
-import org.apache.spark.SparkContext
+import scala.io.Source
 import scala.collection.mutable.ListBuffer
 import scala.util.control._
 
-//val conf = new SparkConf().setAppName("Movie Rating")
-//val sc = new SparkContext(conf)
 def print_readable( arr: ListBuffer[Array[Double]] ){
     print("[")
     for( i <- 0 to arr.length - 1 ){
@@ -16,33 +13,39 @@ def print_readable( arr: ListBuffer[Array[Double]] ){
     }
     println("]")
 }
+
 val filename = "data/rat.csv"
-val rawData = sc.textFile(filename)
-var rawRatings = rawData.map(_.split(",").take(3))
-rawRatings.collect()
 val users = new ListBuffer[Int]()
 val movies = new ListBuffer[Int]()
-
-case class Rating( uid: Int, mid: Int, rat: Double ){
+// Define rating
+class Rating( uid: Int, mid: Int, rat: Double ){
     var user_id: Int = uid
     var movie_id: Int = mid
     var rate: Double = rat
+    users += uid
+    movies += mid
     def getUserId(): Int = user_id
     def getMovieId(): Int = movie_id
     def getRate(): Double = rate
-    override def toString: String = s" user_id: $user_id , movie_id: $movie_id, rate: $rate" 
+    override def toString: String = s" user_id: $user_id , movie_id: $movie_id, rate: $rate"  
 }
-val rawRating = rawRatings.mapPartitionsWithIndex { (idx, iter) => if (idx == 0) iter.drop(1) else iter }
-val rating = rawRating.map { case Array(user, movie,rating) =>  Rating( user.toInt, movie.toInt, rating.toDouble ) }
-
-rating.collect()
-
+// Read file
 var ratings = new ListBuffer[Rating]()
-for( i <- rating.collect().toList ){
-    users += i.getUserId()
-    movies += i.getMovieId()
-    ratings += i
+var ratingArr = ratings.to[Array]
+var numLine: Int = 0
+println("Start read file ")
+for (line <- Source.fromFile(filename).getLines()) {
+  numLine += 1
+  if(numLine>1) {
+    val uid = line.split(",")(0).toInt 
+    val mid = line.split(",")(1).toInt
+    val rat = line.split(",")(2).toDouble
+    var temp = new Rating(uid,mid,rat)
+    println(temp)
+    ratings += temp
+  }
 }
+println("Stop read file ")
 
 val lambda_ = 0.1
 val n_factors = 10
@@ -310,7 +313,7 @@ for( ii <- 0 to n_iterations - 1 ){
 var Q_hat = mult( X, Y )
 val movies_id = new ListBuffer[Int]()
 val movies_title = new ListBuffer[String]()
-case class Movie( mid: Int, mti: String){
+class Movie( mid: Int, mti: String){
     movies_id += mid
     movies_title += mti
     def getMovieId(): Int = mid
@@ -319,16 +322,19 @@ case class Movie( mid: Int, mti: String){
 }
 val filename2 = "data/movies.csv"
 var movieZ = new ListBuffer[Movie]()
-val rawM = sc.textFile(filename2)
-var rawMovies = rawM.map(_.split(",").take(2))
-rawMovies.collect()
-val rawMovie = rawMovies.mapPartitionsWithIndex { (idx, iter) => if (idx == 0) iter.drop(1) else iter }
-val movie = rawMovie.map { case Array(movie_id,movie_title) =>  Movie( movie_id.toInt, movie_title ) }
-movie.collect()
-var movieZ = new ListBuffer[Movie]()
-for( i <- movie.collect().toList ){
-    movieZ += i
+var numLine1: Int = 0
+println("Start read file ")
+for (line <- Source.fromFile(filename2).getLines()) {
+  numLine1 += 1
+  if(numLine1>1) {
+    val movie_id = line.split(",")(0).toInt 
+    val movie_title = line.split(",")(1).toString
+    var temp = new Movie(movie_id,movie_title)
+    println(temp)
+    movieZ += temp
+  }
 }
+println("Stop read file ")
 // Min
 def minimum( arr1: ListBuffer[Array[Double]] ): Double = {
     var res = arr1.apply(0).apply(0)
