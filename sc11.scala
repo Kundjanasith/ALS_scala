@@ -458,3 +458,4 @@ def print_recommendation( W: ListBuffer[Array[Double]], Q: ListBuffer[Array[Doub
     }
 }
 print_recommendation( W, Q , Q_hat)
+System.exit(0)
